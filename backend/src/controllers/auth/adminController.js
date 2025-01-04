@@ -22,3 +22,15 @@ export const deleteUser = asyncHandler(async (req, res) => {
     }
 
 })
+
+export const getAllUsers = asyncHandler(async (req, res) => {
+    const users = await User.find({})
+
+    if (!users) {
+        res.status(404).json({
+            message: 'Users not found'
+        })
+    }
+
+    res.status(200).json(users)
+})

@@ -42,3 +42,27 @@ export const adminMiddleware = asyncHandler(async (req, res, next) => {
         message: 'Unauthorized'
     })
 })
+
+export const creatorMiddleware = asyncHandler(async (req, res, next) => {
+    if (req.user &&
+        (req.user.role === 'admin' || req.user.role === 'creator')
+    ) {
+        next()
+        return
+    }
+
+    res.status(403).json({
+        message: 'Unauthorized'
+    })
+})
+
+export const verifiedMiddleware = asyncHandler(async (req, res, next) => {
+    if (req.user && req.user.isVerified) {
+        next()
+        return
+    }
+
+    res.status(403).json({
+        message: 'Please verify your email'
+    })
+})
