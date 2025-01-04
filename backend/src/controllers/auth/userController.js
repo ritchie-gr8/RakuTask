@@ -291,3 +291,56 @@ export const verifyUser = asyncHandler(async (req, res) => {
         message: 'User verified'
     })
 })
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+    const { email } = req.body
+
+    if (!email) {
+        return res.status(400).json({
+            message: 'Email is required'
+        })
+    }
+
+    const user = await User.findOne({ email })
+    if (!user) {
+        return res.status(404).json({
+            message: 'User not found'
+        })
+    }
+
+    let token = await Token.findOne({
+        userId: user._id
+    })
+
+    if (token) {
+        await token.deleteOne()
+    }
+
+    const passwordResetToken = crypto.randomBytes(64).toString("hex") + user._id
+    const hashedToken = hashToken(passwordResetToken);
+
+    await new Token({
+        userId: user._id,
+        passwordResetToken: hashedToken,
+        createdAt: Date.now(),
+        expiresAt: Date.now() + 60 * 60 * 1000, // 1 hour
+    }).save();
+
+    const resetLink = `${process.env.CLIENT_URL}/reset-password/${passwordResetToken}`
+
+    const subject = "Password Reset - TaskManager"
+    const send_to = user.email;
+    const send_from = process.env.USER_EMAIL
+    const reply_to = "noreply@noreply.com"
+    const template = "forgotPassword"
+    const name = user.name
+    const url = resetLink
+
+    try {
+        await sendEmail(subject, send_to, send_from, reply_to, template, name, url)
+        res.json({ message: "Email sent" })
+    } catch (error) {
+        console.log("Error sending email: ", error)
+        return res.status(500).json({ message: "Error cannot be sent" })
+    }
+})
