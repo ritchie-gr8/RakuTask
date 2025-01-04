@@ -6,7 +6,8 @@ import {
   getUser,
   updateUser,
   userLoginStatus,
-  verifyEmail
+  verifyEmail,
+  verifyUser
 } from '../controllers/auth/userController.js'
 import { protect, adminMiddleware, creatorMiddleware } from '../middleware/authMiddleware.js'
 import { deleteUser, getAllUsers } from '../controllers/auth/adminController.js'
@@ -30,5 +31,6 @@ router.get('/login-status', userLoginStatus)
 
 // verify user
 router.post('/verify-email', protect, verifyEmail)
+router.post('/verify-user/:verificationToken', verifyUser)
 
 export default router
