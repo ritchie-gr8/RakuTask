@@ -8,7 +8,8 @@ import {
   userLoginStatus,
   verifyEmail,
   verifyUser,
-  forgotPassword
+  forgotPassword,
+  resetPassword
 } from '../controllers/auth/userController.js'
 import { protect, adminMiddleware, creatorMiddleware } from '../middleware/authMiddleware.js'
 import { deleteUser, getAllUsers } from '../controllers/auth/adminController.js'
@@ -34,6 +35,8 @@ router.get('/login-status', userLoginStatus)
 router.post('/verify-email', protect, verifyEmail)
 router.post('/verify-user/:verificationToken', verifyUser)
 
+// password routes
 router.post('/forgot-password', forgotPassword)
+router.post('/reset-password/:resetPasswordToken', resetPassword)
 
 export default router

@@ -344,3 +344,28 @@ export const forgotPassword = asyncHandler(async (req, res) => {
         return res.status(500).json({ message: "Error cannot be sent" })
     }
 })
+
+export const resetPassword = asyncHandler(async (req, res) => {
+    const { resetPasswordToken } = req.params
+    const { password } = req.body
+
+    if (!password) {
+        return res.status(400).json({ message: "Password is required" })
+    }
+
+
+    const hashedToken = hashToken(resetPasswordToken)
+    const userToken = await Token.findOne({
+        passwordResetToken: hashedToken,
+        expiresAt: { $gt: Date.now() },
+    })
+
+    if (!userToken) {
+        return res.status(400).json({ message: "Invalid or expired reset token" });
+    }
+
+    const user = await User.findById(userToken.userId);
+    user.password = password;
+    await user.save();
+    res.status(200).json({ message: "Password reset successfully" });
+})
