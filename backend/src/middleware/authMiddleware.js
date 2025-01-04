@@ -22,7 +22,6 @@ export const protect = asyncHandler(async (req, res, next) => {
                 message: 'User not found'
             })
         }
-        console.log(user, 'user auth')
 
         req.user = user
         next()

@@ -143,3 +143,33 @@ export const getUser = asyncHandler(async (req, res) => {
         })
     }
 })
+
+export const updateUser = asyncHandler(async (req, res) => {
+
+    const user = await User.findById(req.user._id)
+
+    if (user) {
+        const { name, bio, photo } = req.body
+
+        user.name = name || user.name
+        user.bio = bio || user.bio
+        user.photo = photo || user.photo
+
+        const updatedUser = await user.save()
+
+        res.status(200).json({
+            _id: updatedUser._id,
+            name: updatedUser.name,
+            email: updatedUser.email,
+            role: updatedUser.role,
+            photo: updatedUser.photo,
+            bio: updatedUser.bio,
+            isVerified: updatedUser.isVerified,
+        })
+    } else {
+        res.status(404).json({
+            message: 'User not found'
+        })
+    }
+
+})
