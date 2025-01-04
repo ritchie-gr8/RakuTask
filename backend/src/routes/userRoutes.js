@@ -4,7 +4,8 @@ import {
   loginUser,
   logoutUser,
   getUser,
-  updateUser
+  updateUser,
+  userLoginStatus
 } from '../controllers/auth/userController.js'
 import { protect, adminMiddleware, creatorMiddleware } from '../middleware/authMiddleware.js'
 import { deleteUser, getAllUsers } from '../controllers/auth/adminController.js'
@@ -22,5 +23,8 @@ router.patch('/user', protect, updateUser)
 // admin routes
 router.get('/admin/users', protect, creatorMiddleware, getAllUsers)
 router.delete('/admin/users/:id', protect, adminMiddleware, deleteUser)
+
+// login status
+router.get('/login-status', userLoginStatus)
 
 export default router
