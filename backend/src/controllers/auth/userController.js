@@ -71,7 +71,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 
 export const loginUser = asyncHandler(async (req, res) => {
 
-    const { email, password } = req
+    const { email, password } = req.body
 
     // check req body
     if (!email || !password) {
