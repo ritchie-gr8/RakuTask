@@ -4,7 +4,7 @@ import cors from 'cors'
 import connect from './src/db/connect.js'
 import cookieParser from 'cookie-parser'
 import fs from 'node:fs'
-import errorHandler from './src/helper/errorHandler.js'
+import errorHandler from './src/middleware/errorHandler.js'
 
 dotenv.config()
 
