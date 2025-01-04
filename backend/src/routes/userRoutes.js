@@ -5,7 +5,8 @@ import {
   logoutUser,
   getUser,
   updateUser,
-  userLoginStatus
+  userLoginStatus,
+  verifyEmail
 } from '../controllers/auth/userController.js'
 import { protect, adminMiddleware, creatorMiddleware } from '../middleware/authMiddleware.js'
 import { deleteUser, getAllUsers } from '../controllers/auth/adminController.js'
@@ -26,5 +27,8 @@ router.delete('/admin/users/:id', protect, adminMiddleware, deleteUser)
 
 // login status
 router.get('/login-status', userLoginStatus)
+
+// verify user
+router.post('/verify-email', protect, verifyEmail)
 
 export default router
