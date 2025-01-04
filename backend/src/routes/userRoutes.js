@@ -9,7 +9,8 @@ import {
   verifyEmail,
   verifyUser,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  changePassword
 } from '../controllers/auth/userController.js'
 import { protect, adminMiddleware, creatorMiddleware } from '../middleware/authMiddleware.js'
 import { deleteUser, getAllUsers } from '../controllers/auth/adminController.js'
@@ -38,5 +39,6 @@ router.post('/verify-user/:verificationToken', verifyUser)
 // password routes
 router.post('/forgot-password', forgotPassword)
 router.post('/reset-password/:resetPasswordToken', resetPassword)
+router.patch('/change-password', protect, changePassword)
 
 export default router
