@@ -18,7 +18,7 @@ export const UserContextProvider = ({ children }) => {
         email: '',
         password: '',
     })
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
 
     const registerUser = async (e) => {
         e.preventDefault()
@@ -44,6 +44,7 @@ export const UserContextProvider = ({ children }) => {
         e.preventDefault()
 
         try {
+            setLoading(true)
             const res = await axios.post(`${serverUrl}/login`, {
                 email: userState.email,
                 password: userState.password
@@ -56,6 +57,8 @@ export const UserContextProvider = ({ children }) => {
             router.push('/')
         } catch (error) {
             toast.error(error.response.data.message)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -75,18 +78,20 @@ export const UserContextProvider = ({ children }) => {
     const getUserLoginStatus = async () => {
         let isLoggedIn = false
         try {
+            setLoading(true)
             const res = await axios.get(`${serverUrl}/login-status`, {
                 withCredentials: true
             })
 
             isLoggedIn = !!res.data
-            setLoading(false)
 
             if (!isLoggedIn) {
                 router.push('/login')
             }
         } catch (error) {
             console.error('Cannot get user login status')
+        } finally {
+            setLoading(false)
         }
 
         console.log('status:', isLoggedIn)
@@ -102,6 +107,87 @@ export const UserContextProvider = ({ children }) => {
         }))
     }
 
+    const getUserDetails = async () => {
+        try {
+            setLoading(true)
+            const res = await axios.get(`${serverUrl}/user`, {
+                withCredentials: true
+            })
+
+            setUser(prev => ({
+                ...prev,
+                ...res.data
+            }))
+
+        } catch (error) {
+            toast.error(error.response.data.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const updateUser = async (e, data) => {
+        e.preventDefault()
+        setLoading(true)
+
+        try {
+            const res = await axios.patch(`${serverUrl}/user`, data, {
+                withCredentials: true
+            })
+
+            setUser(prev => ({
+                ...prev,
+                ...res.data
+            }
+            ))
+
+            console.log(userState)
+
+            toast.success('User successfully updated')
+        } catch (error) {
+            toast.error('Error updating user')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const emailVerification = async () => {
+        // TODO: handle too many request 
+        setLoading(true)
+        try {
+            const res = await axios.post(`${serverUrl}/verify-email`, {}, {
+                withCredentials: true
+            })
+
+            toast.success('Email verification is sent')
+        } catch (error) {
+            toast.error('Error sending verification email')
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const verifyUser = async (token) => {
+        setLoading(true);
+        try {
+            const res = await axios.post(
+                `${serverUrl}/verify-user/${token}`,
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
+
+            toast.success("Verified successfully");
+            getUserDetails()
+            router.push("/");
+        } catch (error) {
+            toast.error(error.response.data.message);
+        } finally {
+            setLoading(false)
+        }
+    };
+
     const resetUserState = () => {
         setUserState({
             name: '',
@@ -111,7 +197,14 @@ export const UserContextProvider = ({ children }) => {
     }
 
     useEffect(() => {
-        getUserLoginStatus()
+        const getUserStatus = async () => {
+            const isLoggedIn = await getUserLoginStatus()
+            if (isLoggedIn) {
+                getUserDetails()
+            }
+        }
+
+        getUserStatus()
     }, [])
 
     return (
@@ -121,7 +214,12 @@ export const UserContextProvider = ({ children }) => {
             handleUserInput,
             resetUserState,
             loginUser,
-            logoutUser
+            logoutUser,
+            getUserLoginStatus,
+            user,
+            updateUser,
+            emailVerification,
+            verifyUser,
         }}>
             {children}
         </UserContext.Provider>
