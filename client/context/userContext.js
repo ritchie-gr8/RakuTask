@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { useRouter } from 'next/navigation'
 import {
-    createContext, useContext, useState
+    createContext, useContext, useEffect, useState
 } from 'react'
 import toast from 'react-hot-toast'
 
@@ -12,7 +12,7 @@ export const UserContextProvider = ({ children }) => {
     const serverUrl = 'http://localhost:8000/api/v1'
     const router = useRouter()
 
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState({})
     const [userState, setUserState] = useState({
         name: '',
         email: '',
@@ -59,6 +59,40 @@ export const UserContextProvider = ({ children }) => {
         }
     }
 
+    const logoutUser = async () => {
+        try {
+            const res = await axios.get(`${serverUrl}/logout`, {
+                withCredentials: true
+            })
+
+            toast.success('Logged out successfully')
+            router.push('/login')
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+    }
+
+    const getUserLoginStatus = async () => {
+        let isLoggedIn = false
+        try {
+            const res = await axios.get(`${serverUrl}/login-status`, {
+                withCredentials: true
+            })
+
+            isLoggedIn = !!res.data
+            setLoading(false)
+
+            if (!isLoggedIn) {
+                router.push('/login')
+            }
+        } catch (error) {
+            console.error('Cannot get user login status')
+        }
+
+        console.log('status:', isLoggedIn)
+        return isLoggedIn
+    }
+
     const handleUserInput = (name) => e => {
         const val = e.target.value
 
@@ -76,13 +110,18 @@ export const UserContextProvider = ({ children }) => {
         })
     }
 
+    useEffect(() => {
+        getUserLoginStatus()
+    }, [])
+
     return (
         <UserContext.Provider value={{
             registerUser,
             userState,
             handleUserInput,
             resetUserState,
-            loginUser
+            loginUser,
+            logoutUser
         }}>
             {children}
         </UserContext.Provider>
