@@ -7,6 +7,8 @@ import toast from 'react-hot-toast'
 
 const UserContext = createContext()
 
+axios.defaults.withCredentials = true;
+
 export const UserContextProvider = ({ children }) => {
 
     const serverUrl = 'http://localhost:8000/api/v1'
@@ -19,6 +21,7 @@ export const UserContextProvider = ({ children }) => {
         password: '',
     })
     const [loading, setLoading] = useState(false)
+    const [allUsers, setAllUsers] = useState([])
 
     const registerUser = async (e) => {
         e.preventDefault()
@@ -188,6 +191,78 @@ export const UserContextProvider = ({ children }) => {
         }
     };
 
+    const sendForgotPasswordEmail = async (email) => {
+        setLoading(true);
+
+        try {
+            const res = await axios.post(
+                `${serverUrl}/forgot-password`,
+                {
+                    email,
+                },
+                {
+                    withCredentials: true,
+                }
+            );
+
+            toast.success("Forgot password email sent successfully");
+        } catch (error) {
+            toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
+    const resetPassword = async (token, password) => {
+        setLoading(true);
+
+        try {
+            const res = await axios.post(
+                `${serverUrl}/reset-password/${token}`,
+                {
+                    password,
+                },
+                {
+                    withCredentials: true,
+                }
+            );
+
+            toast.success("Password reset successfully");
+            router.push("/login");
+        } catch (error) {
+            toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const changePassword = async (currentPassword, newPassword) => {
+        setLoading(true);
+        try {
+
+            if (!currentPassword || !newPassword) {
+                toast.error('Please enter passwords')
+                return
+            }
+
+            const res = await axios.patch(
+                `${serverUrl}/change-password`,
+                { currentPassword, newPassword },
+                {
+                    withCredentials: true,
+                }
+            );
+
+            toast.success("Password changed successfully");
+        } catch (error) {
+            toast.error(error.response.data.message || 'Something went wrong');
+        } finally {
+            setLoading(false);
+        }
+    };
+
+
     const resetUserState = () => {
         setUserState({
             name: '',
@@ -196,6 +271,46 @@ export const UserContextProvider = ({ children }) => {
         })
     }
 
+    // admin only
+    const getAllUsers = async () => {
+        setLoading(true);
+        try {
+            const res = await axios.get(
+                `${serverUrl}/admin/users`,
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
+
+            setAllUsers(res.data);
+        } catch (error) {
+            toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const deleteUser = async (id) => {
+        setLoading(true);
+        try {
+            const res = await axios.delete(
+                `${serverUrl}/admin/users/${id}`,
+                {},
+                {
+                    withCredentials: true,
+                }
+            );
+
+            toast.success("User deleted successfully");
+            getAllUsers();
+        } catch (error) {
+            toast.error(error.response.data.message);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
         const getUserStatus = async () => {
             const isLoggedIn = await getUserLoginStatus()
@@ -203,9 +318,14 @@ export const UserContextProvider = ({ children }) => {
                 getUserDetails()
             }
         }
-
         getUserStatus()
     }, [])
+
+    useEffect(() => {
+        if (user.role === 'admin') {
+            getAllUsers()
+        }
+    }, [user.role])
 
     return (
         <UserContext.Provider value={{
@@ -220,6 +340,11 @@ export const UserContextProvider = ({ children }) => {
             updateUser,
             emailVerification,
             verifyUser,
+            sendForgotPasswordEmail,
+            resetPassword,
+            changePassword,
+            deleteUser,
+            allUsers,
         }}>
             {children}
         </UserContext.Provider>

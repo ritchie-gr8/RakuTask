@@ -3,6 +3,9 @@
 import { useUserContext } from "@/context/userContext";
 import useRedirect from "@/hooks/useUserRedirect";
 import { useState } from "react";
+import ChangePasswordForm from "./_components/auth/ChangePasswordForm";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
 export default function Home() {
   useRedirect("/login");
@@ -13,6 +16,8 @@ export default function Home() {
     userState,
     updateUser,
     emailVerification,
+    allUsers,
+    deleteUser,
   } = useUserContext();
   const { name, photo, isVerified, bio } = user;
 
@@ -85,6 +90,42 @@ export default function Home() {
           </form>
         )}
       </section>
+      <div className="mt-4 flex gap-8">
+        <div className="flex-1">
+          <ChangePasswordForm />
+        </div>
+        <div className="flex-1">
+          {user.role === "admin" && (
+            <ul>
+              {allUsers.map(
+                (user: any, index: number) =>
+                  user.role !== "admin" && (
+                    <li
+                      key={index}
+                      className="mb-2 px-2 py-3 border grid grid-cols-4 items-center gap-8 rounded-md"
+                    >
+                      <img
+                        src={user.photo}
+                        alt={user.name}
+                        className="w-[40px]  h-[40px] rounded-full"
+                      />
+                      <p>{user.name}</p>
+                      <p>{user.bio}</p>
+                      <button
+                        className="bg-red-500 text-white rounded-full p-2 place-content-end"
+                        onClick={() => {
+                          deleteUser(user._id);
+                        }}
+                      >
+                        <FontAwesomeIcon className="size-4" icon={faTrash} />
+                      </button>
+                    </li>
+                  )
+              )}
+            </ul>
+          )}
+        </div>
+      </div>
     </main>
   );
 }
