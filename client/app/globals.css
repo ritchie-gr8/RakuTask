@@ -2,22 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #f9f9f9;
-  height: 100vh;
-  position: relative;
-}
-
-.auth-page {
-    height: 100vh;
-    background: url('../public/glass-bg.png') no-repeat center center fixed;
-}
-
-form {
-  position: relative;
-  box-shadow: 2px 3px 15px rgba(0, 0, 0, 0.08);
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -81,4 +65,24 @@ form {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+body {
+  background-color: #f9f9f9;
+  height: 100vh;
+  position: relative;
+}
+
+.auth-page {
+  height: 100vh;
+  background: url("../public/glass-bg.png") no-repeat center center fixed;
+}
+
+form {
+  position: relative;
+  box-shadow: 2px 3px 15px rgba(0, 0, 0, 0.08);
+}
+
+.main-layout::-webkit-scrollbar {
+  width: 0;
 }

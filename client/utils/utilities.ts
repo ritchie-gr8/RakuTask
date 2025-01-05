@@ -1,0 +1,23 @@
+import moment from "moment";
+
+export const formatTime = (createdAt: string) => {
+  const now = moment();
+  const createdMoment = moment(createdAt);
+
+  if (createdMoment.isSame(now, "day")) {
+    return "Today";
+  }
+
+  if (createdMoment.isSame(now.subtract(1, "days"), "day")) {
+    return "Yesterday";
+  }
+
+  if (
+    createdMoment.isAfter(moment().subtract(6, "days")) ||
+    createdMoment.isAfter(moment().subtract(3, "weeks"), "week")
+  ) {
+    return createdMoment.fromNow();
+  }
+
+  return createdMoment.format("DD//MM/YYYY");
+};

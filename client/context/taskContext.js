@@ -18,6 +18,7 @@ export const TasksProvider = ({ children }) => {
     const [tasks, setTasks] = useState([])
     const [loading, setLoading] = useState(false)
     const [task, setTask] = useState({})
+    const [priority, setPriority] = useState('all')
 
     const getTasks = async () => {
         setLoading(true)
@@ -93,6 +94,8 @@ export const TasksProvider = ({ children }) => {
             tasks,
             task,
             loading,
+            priority,
+            setPriority,
             getTask,
             createTask,
             updateTask,
