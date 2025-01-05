@@ -6,10 +6,10 @@ import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useUserContext } from "@/context/userContext";
 import Link from "next/link";
 
-const RegisterForm = () => {
-  const { registerUser, userState, handleUserInput, resetUserState } =
+const LoginForm = () => {
+  const { loginUser, userState, handleUserInput, resetUserState } =
     useUserContext();
-  const { name, email, password } = userState;
+  const { email, password } = userState;
   const [showPassword, setShowPassword] = useState(false);
   const togglerPassword = () => setShowPassword(!showPassword);
 
@@ -25,32 +25,17 @@ const RegisterForm = () => {
       <div className="relative z-10">
         <h1 className="mb-2 text-center text-[1.35rem] font-medium">
           {" "}
-          Register for an account
+          Login to your account
         </h1>
         <p className="mb-8 px-[2rem] text-center text-[#999} text-[14px]">
-          Create an account. Already have an account?{" "}
+          Don't have an account?{" "}
           <Link
-            href="/login"
+            href="/register"
             className="font-bold text-[#2ecc71] hover:text-[#7263f3]"
           >
-            Login here
+            Register here
           </Link>
         </p>
-        <div className="flex flex-col">
-          <label htmlFor="name" className="mb-1 text-[#999]">
-            Full Name
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={name}
-            onChange={(e) => handleUserInput("name")(e)}
-            className="px-4 py-3 border-[2px]
-            rounded-md outline-[#2ecc71] text-gray-800"
-            placeholder="John Wick"
-          />
-        </div>
         <div className="mt-[1rem] flex flex-col">
           <label htmlFor="email" className="mb-1 text-[#999]">
             Email
@@ -90,15 +75,23 @@ const RegisterForm = () => {
             />
           </button>
         </div>
+        <div className="mt-4 flex justify-end">
+          <Link
+            href="/forgot-password"
+            className="font-bold text-[#2ecc71] text-[14px] hover:text-[#7263f3]"
+          >
+            Forgot password?
+          </Link>
+        </div>
         <div className="flex">
           <button
             type="button"
-            disabled={!name || !email || !password}
+            disabled={!email || !password}
             className="mt-[1.5rem] flex-1 px-4 py-3 font-bold bg-[#2ECC71] 
             text-white rounded-md hover:bg-[#1abc9c] transition-colors"
-            onClick={registerUser}
+            onClick={loginUser}
           >
-            Register
+            Login
           </button>
         </div>
       </div>
@@ -106,4 +99,4 @@ const RegisterForm = () => {
   );
 };
 
-export default RegisterForm;
+export default LoginForm;

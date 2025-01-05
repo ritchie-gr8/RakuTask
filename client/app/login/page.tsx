@@ -1,4 +1,5 @@
 import React from "react";
+import LoginForm from "../_components/auth/LoginForm";
 
 const page = () => {
   return (
@@ -6,7 +7,7 @@ const page = () => {
       className="auth-page w-full h-full
         flex justify-center items-center"
     >
-      page
+      <LoginForm />
     </div>
   );
 };

@@ -1,12 +1,89 @@
+import axios from 'axios'
+import { useRouter } from 'next/navigation'
 import {
-    createContext, useContext
+    createContext, useContext, useState
 } from 'react'
+import toast from 'react-hot-toast'
 
 const UserContext = createContext()
 
 export const UserContextProvider = ({ children }) => {
+
+    const serverUrl = 'http://localhost:8000/api/v1'
+    const router = useRouter()
+
+    const [user, setUser] = useState(null)
+    const [userState, setUserState] = useState({
+        name: '',
+        email: '',
+        password: '',
+    })
+    const [loading, setLoading] = useState(true)
+
+    const registerUser = async (e) => {
+        e.preventDefault()
+        // TODO: add more effective form validation handler
+        if (!userState.email.includes('@') || !userState.password || userState.password.length < 6) {
+            toast.error('Please enter a valid email or password (at least 6 characthers)')
+            return
+        }
+
+        try {
+            const res = await axios.post(`${serverUrl}/register`, userState)
+            toast.success('User successfully registered')
+            resetUserState()
+
+            router.push('/login')
+        } catch (error) {
+            // console.error('Error registering user:', error)
+            toast.error(error.response.data.message)
+        }
+    }
+
+    const loginUser = async (e) => {
+        e.preventDefault()
+
+        try {
+            const res = await axios.post(`${serverUrl}/login`, {
+                email: userState.email,
+                password: userState.password
+            }, {
+                withCredentials: true
+            })
+
+            toast.success('Logged in successfully')
+            resetUserState()
+            router.push('/')
+        } catch (error) {
+            toast.error(error.response.data.message)
+        }
+    }
+
+    const handleUserInput = (name) => e => {
+        const val = e.target.value
+
+        setUserState((prev) => ({
+            ...prev,
+            [name]: val
+        }))
+    }
+
+    const resetUserState = () => {
+        setUserState({
+            name: '',
+            email: '',
+            password: '',
+        })
+    }
+
     return (
-        <UserContext.Provider value={'Hello from context'}>
+        <UserContext.Provider value={{
+            registerUser,
+            userState,
+            handleUserInput,
+            resetUserState,
+            loginUser
+        }}>
             {children}
         </UserContext.Provider>
     )
