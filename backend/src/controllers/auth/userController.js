@@ -50,8 +50,8 @@ export const registerUser = asyncHandler(async (req, res) => {
         path: '/',
         httpOnly: true,
         maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-        sameSite: true,
-        secure: true,
+        sameSite: 'none',
+        secure: false,
     })
 
     if (newUser) {
@@ -114,8 +114,8 @@ export const loginUser = asyncHandler(async (req, res) => {
             path: '/',
             httpOnly: true,
             maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-            sameSite: true,
-            secure: true,
+            sameSite: 'none',
+            secure: false,
         })
 
         return res.status(201).json({
@@ -131,7 +131,12 @@ export const loginUser = asyncHandler(async (req, res) => {
 })
 
 export const logoutUser = asyncHandler(async (req, res) => {
-    res.clearCookie('token')
+    res.clearCookie('token', {
+        httpOnly: true,
+        sameSite: 'none',
+        secure: true,
+        path: '/',
+    })
     res.status(200).json({
         message: 'Logged out'
     })
