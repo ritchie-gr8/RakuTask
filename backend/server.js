@@ -40,6 +40,7 @@ routeFiles.forEach(file => {
 
 const server = async () => {
   try {
+    console.log('Current client url:', process.env.CLIENT_URL)
     await connect()
     app.listen(port, () => {
       console.log('Server is running on port:', port)
