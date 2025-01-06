@@ -50,7 +50,7 @@ function Profile() {
               </span>
             </p>
           </div>
-          <div className="text-gray-400">
+          {/* <div className="text-gray-400">
             <p>Open Tasks:</p>
             <p className="pl-4 relative flex gap-2">
               <span className="absolute h-[70%] w-[0.2rem] left-[1px] top-1/2 translate-y-[-50%] bg-orange-400 rounded-[5px]"></span>
@@ -58,7 +58,7 @@ function Profile() {
                 {activeTasks.length}
               </span>
             </p>
-          </div>
+          </div> */}
           <div className="text-gray-400">
             <p>Completed:</p>
             <p className="pl-4 relative flex gap-2">

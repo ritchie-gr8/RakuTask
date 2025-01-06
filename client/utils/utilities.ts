@@ -23,6 +23,26 @@ export const formatTime = (createdAt: string) => {
   return createdMoment.format("DD//MM/YYYY");
 };
 
+export const formatDuedateTime = (dueDate: string) => {
+  const now = moment();
+  const deadline = moment(dueDate);
+
+  if (deadline.isSame(now, "day")) {
+    return "Due today";
+  }
+
+  if (deadline.isAfter(now)) {
+    const diffDays = deadline.diff(now, 'days');
+    if (diffDays === 1) {
+      return "Due tomorrow";
+    }
+    return `Due in ${diffDays} days`;
+  }
+
+  const diffDays = now.diff(deadline, 'days');
+  return `Overdue by ${diffDays} days`;
+};
+
 export const filterTasks = (tasks: Task[], priority: string): Task[] => {
   if (priority === "all") return tasks;
 

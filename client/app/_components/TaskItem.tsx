@@ -1,5 +1,5 @@
 import { Task } from "@/utils/types";
-import { formatTime } from "@/utils/utilities";
+import { formatDuedateTime, formatTime } from "@/utils/utilities";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faStar, faTrash } from "@fortawesome/free-solid-svg-icons";
@@ -36,7 +36,8 @@ const TaskItem = ({ task }: TaskItemProps) => {
         <p>{task.description}</p>
       </div>
       <div className="mt-auto flex justify-between items-center">
-        <p>{formatTime(task.createdAt)}</p>
+        {/* <p>{formatTime(task.createdAt)}</p> */}
+        <p className="text-muted-foreground text-sm">{formatDuedateTime(task.dueDate)}</p>
         <p className={`text-sm font-bold ${getPriorityColor(task.priority)}`}>
           {task.priority}
         </p>
