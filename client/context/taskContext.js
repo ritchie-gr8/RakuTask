@@ -52,6 +52,7 @@ export const TasksProvider = ({ children }) => {
     const createTask = async (task) => {
         setLoading(true)
         try {
+            console.log(task, 'from context')
             const response = await axios.post(`${serverUrl}/task/create`, task)
             setTasks([...tasks, response.data]);
             toast.success('Task successfully created')

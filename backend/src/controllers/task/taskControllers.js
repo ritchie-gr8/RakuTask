@@ -3,12 +3,14 @@ import TaskModel from "../../models/task/TaskModel.js";
 
 export const createTask = asyncHandler(async (req, res) => {
     try {
-        const { title, description, dueDate, priority, status } = req.body
+        const { title, description, dueDate, priority, status, completed } = req.body
         if (!title || title.trim() === '') {
             res.status(400).json({
                 message: 'Title is required'
             })
         }
+
+        const isCompleted = completed === 'true' || completed === true
 
         const task = new TaskModel({
             title,
@@ -16,6 +18,7 @@ export const createTask = asyncHandler(async (req, res) => {
             dueDate,
             priority,
             status,
+            completed: isCompleted,
             user: req.user._id,
         })
 

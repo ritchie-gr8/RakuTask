@@ -24,7 +24,7 @@ const TaskItem = ({ task }: TaskItemProps) => {
     }
   };
 
-  const { getTask, openModalForEdit, deleteTask, modalMode } = useTasks();
+  const { getTask, openModalForEdit, deleteTask } = useTasks();
 
   return (
     <motion.div
@@ -43,7 +43,7 @@ const TaskItem = ({ task }: TaskItemProps) => {
         <div>
           <div className="flex items-center gap-3 text-gray-400 text-[1.2rem]">
             <button
-              className={`${
+              className={`pointer-events-none ${
                 task.completed ? "text-yellow-400" : "text-gray-400"
               }`}
             >
@@ -58,7 +58,12 @@ const TaskItem = ({ task }: TaskItemProps) => {
             >
               <FontAwesomeIcon icon={faEdit} />
             </button>
-            <button className="text-[#f65314]">
+            <button
+              className="text-[#f65314]"
+              onClick={() => {
+                deleteTask(task._id);
+              }}
+            >
               <FontAwesomeIcon icon={faTrash} />
             </button>
           </div>
