@@ -3,6 +3,9 @@ import { formatTime } from "@/utils/utilities";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEdit, faStar, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { useTasks } from "@/context/taskContext";
+import { motion } from "framer-motion";
+import { item } from "@/utils/animation";
 
 interface TaskItemProps {
   task: Task;
@@ -21,8 +24,13 @@ const TaskItem = ({ task }: TaskItemProps) => {
     }
   };
 
+  const { getTask, openModalForEdit, deleteTask, modalMode } = useTasks();
+
   return (
-    <div className="h-[16rem] px-4 py-3 flex flex-col gap-4 shadow-sm bg-[#f9f9f9] rounded-lg border-2 border-white">
+    <motion.div
+      className="h-[16rem] px-4 py-3 flex flex-col gap-4 shadow-sm bg-[#f9f9f9] rounded-lg border-2 border-white"
+      variants={item}
+    >
       <div>
         <h4 className="font-bold text-2xl">{task.title}</h4>
         <p>{task.description}</p>
@@ -41,7 +49,13 @@ const TaskItem = ({ task }: TaskItemProps) => {
             >
               <FontAwesomeIcon icon={faStar} />
             </button>
-            <button className="text-[#00a1f1]">
+            <button
+              className="text-[#00a1f1]"
+              onClick={() => {
+                getTask(task._id);
+                openModalForEdit(task);
+              }}
+            >
               <FontAwesomeIcon icon={faEdit} />
             </button>
             <button className="text-[#f65314]">
@@ -50,7 +64,7 @@ const TaskItem = ({ task }: TaskItemProps) => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

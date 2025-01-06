@@ -14,6 +14,10 @@ const page = () => {
     }
   }, [user, router]);
 
+  if (user && user._id) {
+    return null;
+  }
+
   return (
     <div
       className="auth-page w-full h-full

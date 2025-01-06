@@ -26,12 +26,12 @@ export const TasksProvider = ({ children }) => {
 
     const getTasks = async () => {
         setLoading(true)
+        if (!userId) return
         try {
             const response = await axios.get(`${serverUrl}/tasks`)
             setTasks(response.data.tasks)
-            console.log(tasks)
         } catch (error) {
-            toast.error('Error getting tasks')
+            userId && toast.error('Error getting tasks')
         } finally {
             setLoading(false)
         }
@@ -43,7 +43,7 @@ export const TasksProvider = ({ children }) => {
             const response = await axios.get(`${serverUrl}/task/${taskId}`)
             setTask(response.data)
         } catch (error) {
-            toast.error('Error getting task')
+            userId && toast.error('Error getting task')
         } finally {
             setLoading(false)
         }
@@ -56,7 +56,7 @@ export const TasksProvider = ({ children }) => {
             setTasks([...tasks, response.data]);
             toast.success('Task successfully created')
         } catch (error) {
-            toast.error('Error creating task')
+            userId && toast.error('Error creating task')
         } finally {
             setLoading(false)
         }
@@ -70,8 +70,9 @@ export const TasksProvider = ({ children }) => {
                 return task._id === response.data._id ? response.data : task
             })
             setTasks(newTasks)
+            toast.success('Task successfully updated')
         } catch (error) {
-            toast.error('Error updating task')
+            userId && toast.error('Error updating task')
         } finally {
             setLoading(false)
         }
@@ -83,8 +84,9 @@ export const TasksProvider = ({ children }) => {
             await axios.delete(`${serverUrl}/task/${taskId}`)
             const newTasks = tasks.filter(task => task._id !== taskId)
             setTasks(newTasks)
+            toast.success('Task successfully deleted')
         } catch (error) {
-            toast.error('Error deleting task')
+            userId && toast.error('Error deleting task')
         } finally {
             setLoading(false)
         }
@@ -97,6 +99,9 @@ export const TasksProvider = ({ children }) => {
             setTask({ ...task, [name]: e.target.value })
         }
     }
+
+    const completedTasks = tasks.filter(task => task.completed)
+    const activeTasks = tasks.filter(task => !task.completed)
 
     const openModalForAdd = () => {
         setModalMode("add");
@@ -134,6 +139,11 @@ export const TasksProvider = ({ children }) => {
             priority,
             isEditing,
             activeTask,
+            modalMode,
+            completedTasks,
+            activeTasks,
+            profileModal,
+            openProfileModal,
             setIsEditing,
             setPriority,
             getTask,

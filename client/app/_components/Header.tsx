@@ -5,10 +5,15 @@ import Link from "next/link";
 import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMoon, faUser } from "@fortawesome/free-solid-svg-icons";
+import { useTasks } from "@/context/taskContext";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const { user } = useUserContext();
+  const { openModalForAdd, activeTasks } = useTasks();
   const { name, _id: userId } = user;
+  const router = useRouter();
+
   return (
     <header className="px-6 my-4 w-full flex items-center justify-between bg-[#f9f9f9]">
       <div>
@@ -16,12 +21,15 @@ const Header = () => {
           <span role="img" aria-label="wave">
             👋
           </span>
-          {userId ? `Welcome, ${name}` : "Welcome to RakuTask"}
+          {userId ? `Welcome, ${name}!` : "Welcome to RakuTask"}
         </h1>
         <p className="text-sm">
           {userId ? (
             <>
-              You have <span className="font-bold text-[#3aafae]">5</span>{" "}
+              You have{" "}
+              <span className="font-bold text-[#3aafae]">
+                {activeTasks.length}
+              </span>{" "}
               active tasks
             </>
           ) : (
@@ -32,9 +40,16 @@ const Header = () => {
       <div className="h-[50px] flex items-center gap-[10.4rem]">
         <button
           className="px-8 py-3 bg-[#3aafae] text-white rounded-[50px]
-        hover:bg-[#00a1f1] transition-all duration-200 ease-in-out"
+          hover:bg-[#00A1F1] hover:text-white transition-all duration-200 ease-in-out"
+          onClick={() => {
+            if (userId) {
+              openModalForAdd();
+            } else {
+              router.push("/login");
+            }
+          }}
         >
-          Create a new task
+          {userId ? "Add a new Task" : "Login / Register"}
         </button>
         <div className="flex gap-4 items-center">
           <Link

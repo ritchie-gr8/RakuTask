@@ -2,24 +2,45 @@
 
 import { useTasks } from "@/context/taskContext";
 import useDetectOutsideModal from "@/hooks/useDetectOutsideModal";
-import React, { useEffect, useRef } from "react";
+import React, { act, useEffect, useRef } from "react";
 
 const Modal = () => {
-  const { task, handleInput, createTask, closeModal, isEditing } = useTasks();
+  const {
+    task,
+    handleInput,
+    createTask,
+    closeModal,
+    isEditing,
+    modalMode,
+    activeTask,
+    updateTask,
+  } = useTasks();
   const ref = useRef(null);
 
-  useDetectOutsideModal({ref, callback: () => {
-    if (isEditing) {
-        closeModal()
-    }
-  }})
+  useDetectOutsideModal({
+    ref,
+    callback: () => {
+      if (isEditing) {
+        closeModal();
+      }
+    },
+  });
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (modalMode === "edit" && activeTask) {
+      handleInput("setTask")(activeTask);
+    }
+  }, [modalMode, activeTask]);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    createTask(task);
+    if (modalMode === "edit") {
+      updateTask(task);
+    } else if (modalMode === "add") {
+      createTask(task);
+    }
+    closeModal();
   };
 
   return (
@@ -98,14 +119,10 @@ const Modal = () => {
           <button
             type="submit"
             className={`text-white py-2 rounded-md w-full hover:bg-blue-500 transition duration-200 ease-in-out ${
-              //   modalMode === "edit" ? "bg-blue-400" :
-              "bg-green-400"
+              modalMode === "edit" ? "bg-blue-400" : "bg-green-400"
             }`}
           >
-            {
-              // modalMode === "edit" ? "Update Task" :
-              "Create Task"
-            }
+            {modalMode === "edit" ? "Update Task" : "Create Task"}
           </button>
         </div>
       </form>

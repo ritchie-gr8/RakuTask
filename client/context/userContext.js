@@ -23,6 +23,8 @@ export const UserContextProvider = ({ children }) => {
     const [loading, setLoading] = useState(false)
     const [allUsers, setAllUsers] = useState([])
 
+    const userId = user._id
+
     const registerUser = async (e) => {
         e.preventDefault()
         // TODO: add more effective form validation handler
@@ -57,6 +59,7 @@ export const UserContextProvider = ({ children }) => {
 
             toast.success('Logged in successfully')
             resetUserState()
+            await getUserDetails()
             router.push('/')
         } catch (error) {
             toast.error(error.response.data.message)
@@ -71,6 +74,7 @@ export const UserContextProvider = ({ children }) => {
                 withCredentials: true
             })
 
+            setUser({});
             toast.success('Logged out successfully')
             router.push('/login')
         } catch (error) {
@@ -92,12 +96,11 @@ export const UserContextProvider = ({ children }) => {
                 router.push('/login')
             }
         } catch (error) {
-            console.error('Cannot get user login status')
+            userId && console.error('Cannot get user login status')
         } finally {
             setLoading(false)
         }
 
-        console.log('status:', isLoggedIn)
         return isLoggedIn
     }
 
@@ -123,7 +126,7 @@ export const UserContextProvider = ({ children }) => {
             }))
 
         } catch (error) {
-            toast.error(error.response.data.message)
+            userId && toast.error(error.response.data.message)
         } finally {
             setLoading(false)
         }
@@ -148,7 +151,7 @@ export const UserContextProvider = ({ children }) => {
 
             toast.success('User successfully updated')
         } catch (error) {
-            toast.error('Error updating user')
+            userId && toast.error('Error updating user')
         } finally {
             setLoading(false)
         }
@@ -313,6 +316,7 @@ export const UserContextProvider = ({ children }) => {
 
     useEffect(() => {
         const getUserStatus = async () => {
+            if (!user && userId) return
             const isLoggedIn = await getUserLoginStatus()
             if (isLoggedIn) {
                 getUserDetails()
