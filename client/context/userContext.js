@@ -11,7 +11,7 @@ axios.defaults.withCredentials = true;
 
 export const UserContextProvider = ({ children }) => {
 
-    const serverUrl = 'http://localhost:8000/api/v1'
+    const serverUrl = 'https://rakutask.onrender.com/api/v1'
     const router = useRouter()
 
     const [user, setUser] = useState({})

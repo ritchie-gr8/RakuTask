@@ -10,7 +10,7 @@ const TasksContext = createContext()
 
 export const TasksProvider = ({ children }) => {
 
-    const serverUrl = 'http://localhost:8000/api/v1'
+    const serverUrl = 'https://rakutask.onrender.com/api/v1'
     const router = useRouter()
 
     const userId = useUserContext().user._id
