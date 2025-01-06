@@ -9,7 +9,7 @@ import { useTasks } from "@/context/taskContext";
 import { useRouter } from "next/navigation";
 
 const Header = () => {
-  const { user } = useUserContext();
+  const { user, logoutUser } = useUserContext();
   const { openModalForAdd, activeTasks } = useTasks();
   const { name, _id: userId } = user;
   const router = useRouter();
@@ -37,7 +37,7 @@ const Header = () => {
           )}
         </p>
       </div>
-      <div className="h-[50px] flex items-center gap-[10.4rem]">
+      <div className="h-[50px] flex items-center gap-4">
         <button
           className="px-8 py-3 bg-[#3aafae] text-white rounded-[50px]
           hover:bg-[#00A1F1] hover:text-white transition-all duration-200 ease-in-out"
@@ -51,7 +51,17 @@ const Header = () => {
         >
           {userId ? "Add a new Task" : "Login / Register"}
         </button>
-        <div className="flex gap-4 items-center">
+        {userId && (
+          <button
+            className="py-3 px-8 bg-[#EB4E31] text-white rounded-[50px] hover:bg-[#3aafae] transition duration-200 ease-in-out"
+            onClick={logoutUser}
+          >
+            Sign Out
+          </button>
+        )}
+
+        {/* TODO: darkmode and maybe more user info */}
+        {/* <div className="flex gap-4 items-center">
           <Link
             href="#"
             passHref
@@ -70,7 +80,7 @@ const Header = () => {
           >
             <FontAwesomeIcon icon={faUser} />
           </Link>
-        </div>
+        </div> */}
       </div>
     </header>
   );
